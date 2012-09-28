@@ -1,5 +1,6 @@
 package struct.recur;
 
+import java.lang.reflect.Method;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Stack;
@@ -20,37 +21,37 @@ public class BinaryTree implements AbsTree {
 
 	private List<BinaryTreeNode> nodeList = new LinkedList<BinaryTreeNode>();
 
-	public static void traverse_recur(BinaryTreeNode node, TraverseType order) {
-		switch (order) {
-		case PRE_ORDER:
-			System.out.print(node.data);
-			if (node.left != null) {
-				traverse_recur(node.left, order);
-			}
-			if (node.right != null) {
-				traverse_recur(node.right, order);
-			}
-			break;
-		case IN_ORDER:
-			if (node.left != null) {
-				traverse_recur(node.left, order);
-			}
-			System.out.print(node.data);
-			if (node.right != null) {
-				traverse_recur(node.right, order);
-			}
-			break;
-		case POST_ORDER:
-			if (node.left != null) {
-				traverse_recur(node.left, order);
-			}
-			if (node.right != null) {
-				traverse_recur(node.right, order);
-			}
-			System.out.print(node.data);
-			break;
+	public static void traverse_recurPreOrder(BinaryTreeNode node,
+			List<Object> data) {
+		data.add(node.data);
+		if (node.left != null) {
+			traverse_recurPreOrder(node.left, data);
 		}
+		if (node.right != null) {
+			traverse_recurPreOrder(node.right, data);
+		}
+	}
 
+	public static void traverse_recurInOrder(BinaryTreeNode node,
+			List<Object> data) {
+		if (node.left != null) {
+			traverse_recurInOrder(node.left, data);
+		}
+		data.add(node.data);
+		if (node.right != null) {
+			traverse_recurInOrder(node.right, data);
+		}
+	}
+
+	public static void traverse_recurPostOrder(BinaryTreeNode node,
+			List<Object> data) {
+		if (node.left != null) {
+			traverse_recurPostOrder(node.left, data);
+		}
+		if (node.right != null) {
+			traverse_recurPostOrder(node.right, data);
+		}
+		data.add(node.data);
 	}
 
 	private static int findIndex(List<Object> list, Object key) {
@@ -96,33 +97,53 @@ public class BinaryTree implements AbsTree {
 		return 0;
 	}
 
-	private static void visit(BinaryTreeNode node) {
-		System.out.println(node.data);
-	}
-
-	public static void traverseInOrder(BinaryTreeNode head) {
-		if (head == null) {
-			return;
-		}
-
+	public static void traversePreOrder(BinaryTreeNode head, List<Object> data) {
 		// Push the root node
 		Stack<BinaryTreeNode> _nodeStack = new Stack<BinaryTreeNode>();
 		_nodeStack.push(head);
 		while (!_nodeStack.isEmpty()) {
 			// Push the left tree
 			while (_nodeStack.lastElement() != null) {
-				visit(_nodeStack.lastElement());
+				data.add(_nodeStack.lastElement().data);
 				_nodeStack.push(_nodeStack.lastElement().left);
 			}
 
+			// The top the stack should be null(_nodeStack.lastElement().left)
+			// That is useful to prevent enter the previous loop
+			// Now, pop it
 			_nodeStack.pop();
+
 			if (!_nodeStack.isEmpty()) {
-				// The left tree is empty, pop self
+				// The root is useless to traverse the right tree, pop it and
+				// goon
 				BinaryTreeNode _tmp = _nodeStack.pop();
-				
-				// _nodeStack.pop();
-				// Parse the right tree
 				_nodeStack.push(_tmp.right);
+			}
+		}
+	}
+
+	public static void traverseInOrder(BinaryTreeNode head, List<Object> data) {
+		// Push the root node
+		Stack<BinaryTreeNode> _nodeStack = new Stack<BinaryTreeNode>();
+		_nodeStack.push(head);
+		while (!_nodeStack.isEmpty()) {
+			// Push the left tree
+			while (_nodeStack.lastElement() != null) {
+				_nodeStack.push(_nodeStack.lastElement().left);
+			}
+
+			// The top the stack should be null(_nodeStack.lastElement().left)
+			// That is useful to prevent enter the previous loop
+			// Now, pop it
+			_nodeStack.pop();
+
+			if (!_nodeStack.isEmpty()) {
+				// The root is useless to traverse the right tree, pop it and
+				// goon
+				BinaryTreeNode _tmp = _nodeStack.pop();
+				_nodeStack.push(_tmp.right);
+
+				data.add(_tmp.data);
 			}
 		}
 	}
