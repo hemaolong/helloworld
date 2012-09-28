@@ -162,7 +162,7 @@ public class BinaryTree implements AbsTree {
 			// Push the left tree
 			while (_tmp.left != null) {
 				_tmp = _tmp.left;
-				visit(_tmp);
+				// visit(_tmp);
 				_nodeStack.push(_tmp);
 				_leftDepth++;
 			}
@@ -176,7 +176,7 @@ public class BinaryTree implements AbsTree {
 				_tmp = _nodeStack.pop();
 				if (_tmp.right != null) {
 					_tmp = _tmp.right;
-					visit(_tmp);
+					// visit(_tmp);
 					_nodeStack.push(_tmp);
 
 					_leftDepth++;
